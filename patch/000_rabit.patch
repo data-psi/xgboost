@@ -1,0 +1,61 @@
+diff --git a/rabit/include/rabit/internal/utils.h b/rabit/include/rabit/internal/utils.h
+index 4b36378..9a2fc08 100644
+--- a/rabit/include/rabit/internal/utils.h
++++ b/rabit/include/rabit/internal/utils.h
+@@ -11,6 +11,21 @@
+ #include <string>
+ #include <cstdlib>
+ #include <vector>
++#include <exception>
++
++struct RabitException : public std::exception {
++
++    std::string message;
++
++    RabitException(std::string msg) {
++      message = msg;
++    }
++
++    const std::string getMessage() const throw () {
++      return message;
++    }
++};
++
+ 
+ #ifndef RABIT_STRICT_CXX98_
+ #include <cstdarg>
+@@ -68,7 +83,8 @@ const int kPrintBuffer = 1 << 12;
+  */
+ inline void HandleAssertError(const char *msg) {
+   fprintf(stderr, "AssertError:%s\n", msg);
+-  exit(-1);
++  throw RabitException(msg);
++  // exit(-1);
+ }
+ /*!
+  * \brief handling of Check error, caused by inappropriate input
+@@ -76,7 +92,8 @@ inline void HandleAssertError(const char *msg) {
+  */
+ inline void HandleCheckError(const char *msg) {
+   fprintf(stderr, "%s\n", msg);
+-  exit(-1);
++  throw RabitException(msg);
++  //exit(-1);
+ }
+ inline void HandlePrint(const char *msg) {
+   printf("%s", msg);
+diff --git a/rabit/src/allreduce_robust.cc b/rabit/src/allreduce_robust.cc
+index ce5a561..02076cd 100644
+--- a/rabit/src/allreduce_robust.cc
++++ b/rabit/src/allreduce_robust.cc
+@@ -52,7 +52,9 @@ void AllreduceRobust::Shutdown(void) {
+                 "Shutdown: check ack must return true");
+ 
+ #if defined (__APPLE__)
+-        sleep(1);
++  if (world_size > 1) {
++      sleep(1);
++  }
+ #endif
+ 
+   AllreduceBase::Shutdown();
