@@ -9,12 +9,15 @@
 #include <dmlc/base.h>
 #include <dmlc/logging.h>
 #include <xgboost/c_api.h>
+#include <iostream>
 
 /*! \brief  macro to guard beginning and end section of all functions */
 #define API_BEGIN() try {
 /*! \brief every function starts with API_BEGIN();
      and finishes with API_END() or API_END_HANDLE_ERROR */
-#define API_END() } catch(dmlc::Error &_except_) { return XGBAPIHandleException(_except_); } return 0;  // NOLINT(*)
+#define API_END() } catch(dmlc::Error &_except_) { return XGBAPIHandleException(_except_); } \
+catch (...) { std::cout << "EXCEPTION CAUGHT" <<  << "\n"; return 1; } \
+return 0;  // NOLINT(*)
 #define CHECK_HANDLE() if (handle == nullptr) \
   LOG(FATAL) << "DMatrix/Booster has not been intialized or has already been disposed.";
 /*!
