@@ -1,45 +1,31 @@
 diff --git a/rabit/include/rabit/internal/utils.h b/rabit/include/rabit/internal/utils.h
-index 4b36378..9a2fc08 100644
+index 4b36378..1d4f8b2 100644
 --- a/rabit/include/rabit/internal/utils.h
 +++ b/rabit/include/rabit/internal/utils.h
-@@ -11,6 +11,21 @@
+@@ -11,6 +11,7 @@
  #include <string>
  #include <cstdlib>
  #include <vector>
-+#include <exception>
-+
-+struct RabitException : public std::exception {
-+
-+    std::string message;
-+
-+    RabitException(std::string msg) {
-+      message = msg;
-+    }
-+
-+    const std::string getMessage() const throw () {
-+      return message;
-+    }
-+};
-+
++#include <dmlc/logging.h>
  
  #ifndef RABIT_STRICT_CXX98_
  #include <cstdarg>
-@@ -68,7 +83,8 @@ const int kPrintBuffer = 1 << 12;
+@@ -68,7 +69,8 @@ const int kPrintBuffer = 1 << 12;
   */
  inline void HandleAssertError(const char *msg) {
    fprintf(stderr, "AssertError:%s\n", msg);
 -  exit(-1);
-+  throw RabitException(msg);
++  throw dmlc::Error(msg);
 +  // exit(-1);
  }
  /*!
   * \brief handling of Check error, caused by inappropriate input
-@@ -76,7 +92,8 @@ inline void HandleAssertError(const char *msg) {
+@@ -76,7 +78,8 @@ inline void HandleAssertError(const char *msg) {
   */
  inline void HandleCheckError(const char *msg) {
    fprintf(stderr, "%s\n", msg);
 -  exit(-1);
-+  throw RabitException(msg);
++  throw dmlc::Error(msg);
 +  //exit(-1);
  }
  inline void HandlePrint(const char *msg) {
