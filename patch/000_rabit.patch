@@ -1,5 +1,5 @@
 diff --git a/rabit/include/rabit/internal/utils.h b/rabit/include/rabit/internal/utils.h
-index 4b36378..a3b97bb 100644
+index 4b36378..2aa2971 100644
 --- a/rabit/include/rabit/internal/utils.h
 +++ b/rabit/include/rabit/internal/utils.h
 @@ -11,6 +11,8 @@
@@ -26,7 +26,7 @@ index 4b36378..a3b97bb 100644
  inline void HandleCheckError(const char *msg) {
    fprintf(stderr, "%s\n", msg);
 -  exit(-1);
-+  std::cout << dmlc::StackTrace() << "\n";
++  std::cerr << "HandleCheckError.STACK_TRACE: " << dmlc::StackTrace() << "\n";
 +  throw dmlc::Error(msg);
 +  //exit(-1);
  }
