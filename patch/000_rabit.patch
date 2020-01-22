@@ -1,17 +1,19 @@
 diff --git a/rabit/include/rabit/internal/utils.h b/rabit/include/rabit/internal/utils.h
-index 4b36378..2aa2971 100644
+index 4b36378..940a36a 100644
 --- a/rabit/include/rabit/internal/utils.h
 +++ b/rabit/include/rabit/internal/utils.h
-@@ -11,6 +11,8 @@
+@@ -11,6 +11,10 @@
  #include <string>
  #include <cstdlib>
  #include <vector>
 +#include <dmlc/logging.h>
 +#include <iostream>
++#include <chrono>
++#include <ctime>
  
  #ifndef RABIT_STRICT_CXX98_
  #include <cstdarg>
-@@ -68,7 +70,8 @@ const int kPrintBuffer = 1 << 12;
+@@ -68,7 +72,8 @@ const int kPrintBuffer = 1 << 12;
   */
  inline void HandleAssertError(const char *msg) {
    fprintf(stderr, "AssertError:%s\n", msg);
@@ -21,11 +23,14 @@ index 4b36378..2aa2971 100644
  }
  /*!
   * \brief handling of Check error, caused by inappropriate input
-@@ -76,7 +79,9 @@ inline void HandleAssertError(const char *msg) {
+@@ -76,7 +81,12 @@ inline void HandleAssertError(const char *msg) {
   */
  inline void HandleCheckError(const char *msg) {
    fprintf(stderr, "%s\n", msg);
 -  exit(-1);
++  std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
++  time_t now_tt = std::chrono::system_clock::to_time_t(now);
++  std::cerr << "HandleCheckError time: " << ctime(&now_tt) << '\n';;
 +  std::cerr << "HandleCheckError.STACK_TRACE: " << dmlc::StackTrace() << "\n";
 +  throw dmlc::Error(msg);
 +  //exit(-1);
